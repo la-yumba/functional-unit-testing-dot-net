@@ -8,11 +8,16 @@ namespace MyBnb
     public static class Program
     {
         static void Main(string[] args)
-        {            
-            Console.WriteLine(Countries.CodeIsValid("it"));
-            Console.WriteLine(Countries.CodeIsValid("i"));
-            // var redis = ConnectionMultiplexer.Connect("localhost");
-            // redis.Subscribe<Reservation>("reservation-requests", Reservations.Make);
+        {
+            var redis = ConnectionMultiplexer.Connect("localhost");
+            SetupReservations(redis);
+        }
+
+        static void SetupReservations(ConnectionMultiplexer redis)
+        {
+            void persist(Reservation r) => redis.ListLeftPush("reservations", r);
+            var handler = Reservations.SetupReservationHandler(persist);
+            redis.Subscribe<Reservation>("reservation-requests", handler);
         }
     }
 }

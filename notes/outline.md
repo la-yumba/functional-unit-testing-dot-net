@@ -11,4 +11,5 @@
     5. Pure / impure functions with regards to testability
     6. Isolating side effects `isolate-datetime-now`
     7. Optional side effects `optional-remote-lookup-problem`
-    7. Interaction with the external world `basic-connectivity
+    8. The Pure attribute
+    9. Interaction with the external world `basic-connectivity`

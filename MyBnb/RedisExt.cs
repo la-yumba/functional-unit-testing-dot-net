@@ -13,5 +13,8 @@ namespace MyBnb
 
         public static void Send(this ConnectionMultiplexer redis, string channel, object message) => 
             redis.GetDatabase(0).PublishAsync(channel, JsonConvert.SerializeObject(message));
+
+        public static void ListLeftPush<T>(this ConnectionMultiplexer redis, string key, T value) => 
+            redis.GetDatabase(0).ListLeftPush(key, JsonConvert.SerializeObject(value));
     }
 }

@@ -4,6 +4,8 @@
 
 ### Project setup
 
+see https://docs.microsoft.com/en-us/dotnet/articles/core/tools/
+
 ```
 
 // dotnet new --all

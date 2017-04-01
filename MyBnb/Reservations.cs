@@ -5,25 +5,29 @@ namespace MyBnb
 {
     public static class Reservations
     {
-        public static void Make(Reservation r)
+        public static Action<Reservation> SetupReservationHandler(Action<Reservation> persist)
+            => reservation => 
         {
-            if (CheckOutIsValid(r)
-                && CheckInIsValid(r)
-                && Countries.CodeIsValid(r.CountryCode))
-                Persist(r);
-        }
+            DateTime clock() => DateTime.Now;
 
-        static void Persist(Reservation r) => throw new NotImplementedException();
+            bool isValid(Reservation r) =>
+                CheckOutIsValid(r)
+                    && CheckInIsValid(clock, r)
+                    && Countries.CodeIsValid(r.CountryCode);
 
-        // isolate the side effect of DateTime.Now
-        // this function only has side effects
-        // HOWEVER note that this is not the final solution
-        static bool CheckInIsValid(Reservation r) =>
-            CheckInIsValid(DateTime.Now, r);
+            HandleReservation(isValid, persist, reservation);
+        };
 
         [Pure]
-        internal static bool CheckInIsValid(DateTime now, Reservation r) =>
-            now.Date <= r.CheckIn.Date;
+        internal static void HandleReservation(Func<Reservation, bool> isValid
+            , Action<Reservation> persist, Reservation r)
+        {
+            if (isValid(r)) persist(r);
+        }
+
+        [Pure]
+        internal static bool CheckInIsValid(Func<DateTime> clock, Reservation r) =>
+            clock().Date <= r.CheckIn.Date;
 
         [Pure]
         internal static bool CheckOutIsValid(Reservation r) =>
