@@ -13,3 +13,4 @@
     7. Optional side effects `optional-remote-lookup-problem`
     8. The Pure attribute
     9. Interaction with the external world `basic-connectivity`
+    10. Testing configuration

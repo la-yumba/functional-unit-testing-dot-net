@@ -5,13 +5,18 @@ namespace MyBnb
 {
     public static class Reservations
     {
-        public static Action<Reservation> SetupReservationHandler(Action<Reservation> persist)
+        public class Config
+        {
+            public int MinimumStay { get; set; }
+        }
+
+        public static Action<Reservation> SetupReservationHandler(Action<Reservation> persist, Config config)
             => reservation => 
         {
             DateTime clock() => DateTime.Now;
 
             bool isValid(Reservation r) =>
-                CheckOutIsValid(r)
+                CheckOutIsValid(config.MinimumStay, r)
                     && CheckInIsValid(clock, r)
                     && Countries.CodeIsValid(r.CountryCode);
 
@@ -30,7 +35,7 @@ namespace MyBnb
             clock().Date <= r.CheckIn.Date;
 
         [Pure]
-        internal static bool CheckOutIsValid(Reservation r) =>
-            r.CheckIn.Date < r.CheckOut.Date;
+        internal static bool CheckOutIsValid(int minStay, Reservation r) =>
+            r.CheckIn.Date.AddDays(minStay) <= r.CheckOut.Date;
     }
 }
