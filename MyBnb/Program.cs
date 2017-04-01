@@ -1,5 +1,7 @@
 ﻿using System;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyBnb.Tests")]
+
 namespace MyBnb
 {
     public class Program
@@ -8,7 +10,5 @@ namespace MyBnb
         {
             Console.WriteLine("Hello World!");
         }
-
-        public static int Add(int a, int b) => a + 1;
     }
 }
