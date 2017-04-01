@@ -9,14 +9,17 @@ namespace MyBnb
     {
         static Regex countryCodeRegExp = new Regex("[a-z]{2}");
 
-        // this passes, but unit tests should not do I/O
-        // Fast (what if this API is slow)
-        // Repeatable (what if 'xx' becomes a country, or you run with no connection?)
-        internal static bool CodeIsValid(string code) 
-        {
-            if (!countryCodeRegExp.IsMatch(code))
-                return false;
+        internal static bool CodeIsValid(Func<string, bool> codeExists, string code) =>
+            CodeHasCorrectFormat(code) && CodeExists(code);
 
+        public static bool CodeIsValid(string code) =>
+            CodeIsValid(CodeExists, code);
+
+        static bool CodeHasCorrectFormat(string code) =>
+            countryCodeRegExp.IsMatch(code);
+
+        static bool CodeExists(string code) 
+        {
             var uri = $"https://restcountries.eu/rest/v2/alpha/{code}";
             var request = new HttpClient().GetAsync(uri);
             return request.Result.StatusCode != HttpStatusCode.NotFound;
