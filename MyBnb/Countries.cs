@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -9,12 +10,14 @@ namespace MyBnb
     {
         static Regex countryCodeRegExp = new Regex("[a-z]{2}");
 
-        internal static bool CodeIsValid(Func<string, bool> codeExists, string code) =>
-            CodeHasCorrectFormat(code) && CodeExists(code);
+        [Pure]
+        public static bool CodeIsValid(Func<string, bool> codeExists, string code) =>
+            CodeHasCorrectFormat(code) && codeExists(code);
 
         public static bool CodeIsValid(string code) =>
             CodeIsValid(CodeExists, code);
 
+        [Pure]
         static bool CodeHasCorrectFormat(string code) =>
             countryCodeRegExp.IsMatch(code);
 

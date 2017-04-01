@@ -12,7 +12,7 @@ namespace MyBnb.Tests
         [InlineData("xx", false)]
         void OnlyWhenCountryCodeExists_ThenValidationPasses(string code, bool expected)
         {
-            Func<string, bool> codeExists = c => 
+            bool codeExists(string c) => 
                 new []{"it", "in", "ir"}.Contains(c);
 
             var actual = Countries.CodeIsValid(codeExists, code);

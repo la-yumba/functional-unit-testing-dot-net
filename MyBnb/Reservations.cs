@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace MyBnb
 {
@@ -20,10 +21,11 @@ namespace MyBnb
         static bool CheckInIsValid(Reservation r) =>
             CheckInIsValid(DateTime.Now, r);
 
-        // this function only has logic
+        [Pure]
         internal static bool CheckInIsValid(DateTime now, Reservation r) =>
             now.Date <= r.CheckIn.Date;
 
+        [Pure]
         internal static bool CheckOutIsValid(Reservation r) =>
             r.CheckIn.Date < r.CheckOut.Date;
     }
