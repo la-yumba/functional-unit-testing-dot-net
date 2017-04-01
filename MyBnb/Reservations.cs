@@ -6,12 +6,20 @@ namespace MyBnb
     {
         public static void Make(Reservation r)
         {
-            if (CheckOutIsValid(r))
+            if (CheckOutIsValid(r)
+                && CheckInIsValid(r))
             	throw new NotImplementedException();
         }
 
-        internal static bool CheckInIsValid(Reservation r) =>
-            DateTime.Now.Date <= r.CheckIn.Date;       
+        // isolate the side effect of DateTime.Now
+        // this function only has side effects
+        // HOWEVER note that this is not the final solution
+        static bool CheckInIsValid(Reservation r) =>
+            CheckInIsValid(DateTime.Now, r);
+
+        // this function only has logic
+        internal static bool CheckInIsValid(DateTime now, Reservation r) =>
+            now.Date <= r.CheckIn.Date;
 
         internal static bool CheckOutIsValid(Reservation r) =>
             r.CheckIn.Date < r.CheckOut.Date;       
