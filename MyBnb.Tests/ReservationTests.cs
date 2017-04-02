@@ -17,7 +17,7 @@ namespace MyBnb.Tests
                 CheckIn = now.AddDays(diff),
             };
 
-            var actual = Reservations.CheckInIsValid(() => now, r);
+            var actual = Reservations.CheckInIsValid(() => now)(r);
 
             Assert.Equal(expected, actual);
         }
@@ -35,7 +35,7 @@ namespace MyBnb.Tests
                 CheckOut = checkIn.AddDays(diff),
             };
 
-            var actual = Reservations.CheckOutIsValid(1, r);
+            var actual = Reservations.CheckOutIsValid(1)(r);
 
             Assert.Equal(expected, actual);
         }

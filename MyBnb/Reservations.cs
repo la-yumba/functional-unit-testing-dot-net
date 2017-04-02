@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace MyBnb
 {
@@ -11,31 +13,36 @@ namespace MyBnb
         }
 
         public static Action<Reservation> SetupReservationHandler(Action<Reservation> persist, Config config)
-            => reservation => 
         {
             DateTime clock() => DateTime.Now;
 
-            bool isValid(Reservation r) =>
-                CheckOutIsValid(config.MinimumStay, r)
-                    && CheckInIsValid(clock, r)
-                    && Countries.CodeIsValid(r.CountryCode);
+            var predicates = new []
+            {
+                CheckOutIsValid(config.MinimumStay),
+                CheckInIsValid(clock),
+                r => Countries.CodeIsValid(r.CountryCode)
+            };
 
-            HandleReservation(isValid, persist, reservation);
-        };
-
-        [Pure]
-        internal static void HandleReservation(Func<Reservation, bool> isValid
-            , Action<Reservation> persist, Reservation r)
-        {
-            if (isValid(r)) persist(r);
+            return HandleReservation(predicates, persist);
         }
 
         [Pure]
-        internal static bool CheckInIsValid(Func<DateTime> clock, Reservation r) =>
+        internal static Action<Reservation> HandleReservation(IEnumerable<Predicate<Reservation>> predicates
+            , Action<Reservation> persist)
+            => r =>
+        {
+            if (predicates.All(p => p(r))) 
+                persist(r);
+        };
+
+        [Pure]
+        internal static Predicate<Reservation> CheckInIsValid(Func<DateTime> clock)
+            => r =>
             clock().Date <= r.CheckIn.Date;
 
         [Pure]
-        internal static bool CheckOutIsValid(int minStay, Reservation r) =>
+        internal static Predicate<Reservation> CheckOutIsValid(int minStay)
+            => r =>
             r.CheckIn.Date.AddDays(minStay) <= r.CheckOut.Date;
     }
 }
